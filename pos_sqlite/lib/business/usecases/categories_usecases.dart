@@ -22,3 +22,13 @@ class AddCategory {
     return await goodsRepository.addCategory(category);
   }
 }
+
+class RemoveCategory {
+  final GoodsRepository goodsRepository;
+
+  RemoveCategory(this.goodsRepository);
+
+  Future<Either<Failure, int>> call(CategoryEntity category) async {
+    return await goodsRepository.removeCategory(category);
+  }
+}

@@ -2,24 +2,25 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pos_sqlite/business/entities/category_entity.dart';
+import 'package:pos_sqlite/business/entities/table_entity.dart';
 import 'package:pos_sqlite/business/usecases/categories_usecases.dart';
 import 'package:pos_sqlite/core/error/failure.dart';
 
-part 'categories_event.dart';
-part 'categories_state.dart';
+part 'tables_event.dart';
+part 'tables_state.dart';
 
-class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
+class TablesBloc extends Bloc<TablesEvent, TablesState> {
   final GetCategories getCategories;
   final AddCategory addCategory;
   final RemoveCategory removeCategory;
 
-  CategoriesBloc({
+  TablesBloc({
     required this.getCategories,
     required this.addCategory,
     required this.removeCategory,
-  }) : super(CategoriesInitial()) {
-    on<LoadCategoriesEvent>((event, emit) async {
-      emit(CategoriesLoading());
+  }) : super(TablesInitial()) {
+    on<LoadTablesEvent>((event, emit) async {
+      emit(TablesLoading());
       await loadCategories(event, emit);
     });
 

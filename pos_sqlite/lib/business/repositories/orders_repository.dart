@@ -6,14 +6,14 @@ import 'package:pos_sqlite/core/error/failure.dart';
 
 abstract class OrdersRepository {
   Future<Either<Failure, List<TableEntity>>> getTables();
-  Future<void> addTable(TableEntity tableEntity);
-  Future<void> removeTable(TableEntity tableEntity);
+  Future<Either<Failure, int>> addTable(TableEntity tableEntity);
+  Future<Either<Failure, int>> removeTable(TableEntity tableEntity);
   Future<Either<Failure, List<OrderEntity>>> getOrders();
-  Future<void> addItem({
+  Future<Either<Failure, int>> addItem({
     required ItemEntity item,
     required OrderEntity order,
   });
-  Future<void> removeItem({
+  Future<Either<Failure, int>> removeItem({
     required ItemEntity item,
     required OrderEntity order,
   });

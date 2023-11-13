@@ -8,6 +8,6 @@ abstract class GoodsRepository {
   Future<Either<Failure, int>> addCategory(CategoryEntity categoryEntity);
   Future<Either<Failure, int>> removeCategory(CategoryEntity categoryEntity);
   Future<Either<Failure, List<ItemEntity>>> getItems(int categoryId);
-  Future<Either<Failure, void>> addItem(ItemEntity itemEntity);
-  Future<Either<Failure, void>> removeItem(ItemEntity itemEntity);
+  Future<Either<Failure, int>> addItem(ItemEntity itemEntity);
+  Future<Either<Failure, int>> removeItem(ItemEntity itemEntity);
 }
