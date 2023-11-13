@@ -1,6 +1,8 @@
 import 'package:path/path.dart';
 import 'package:pos_sqlite/data/models/category_model.dart';
 import 'package:pos_sqlite/data/models/item_model.dart';
+import 'package:pos_sqlite/data/models/order_item_model.dart';
+import 'package:pos_sqlite/data/models/order_model.dart';
 import 'package:pos_sqlite/data/models/table_model.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -30,7 +32,7 @@ class SqliteService {
           'CREATE TABLE $ordersTable(id INTEGER PRIMARY KEY AUTOINCREMENT, tableId INTEGER, client TEXT)',
         );
         await database.execute(
-          'CREATE TABLE $orderItemsTable(id INTEGER PRIMARY KEY AUTOINCREMENT, orderId INTEGER, count REAL)',
+          'CREATE TABLE $orderItemsTable(id INTEGER PRIMARY KEY AUTOINCREMENT, itemId INTEGER, orderId INTEGER, count REAL)',
         );
       },
       version: 1,
@@ -124,5 +126,85 @@ class SqliteService {
       orderBy: 'title',
     );
     return queryResult.map((e) => TableModel.fromMap(e)).toList();
+  }
+
+  Future<List<OrderModel>> getTableOrders(int tableId) async {
+    final db = await initializeDB();
+    final List<Map<String, Object?>> queryResult = await db.query(
+      ordersTable,
+      where: 'tableId = ?',
+      whereArgs: [tableId],
+    );
+    return queryResult.map((e) => OrderModel.fromMap(e)).toList();
+  }
+
+  Future<List<OrderModel>> getAllOrders() async {
+    final db = await initializeDB();
+    final List<Map<String, Object?>> queryResult = await db.query(
+      ordersTable,
+    );
+    return queryResult.map((e) => OrderModel.fromMap(e)).toList();
+  }
+
+  Future<int> createOrder(OrderModel item) async {
+    final db = await initializeDB();
+    final id = await db.insert(
+      ordersTable,
+      item.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    return Future.value(id);
+  }
+
+  Future<int> deleteOrder(OrderModel item) async {
+    final db = await initializeDB();
+    final count = await db.delete(
+      ordersTable,
+      where: 'id = ?',
+      whereArgs: [item.id],
+    );
+    return Future.value(count);
+  }
+
+  Future<List<OrderItemModel>> getOrderItems(int orderId) async {
+    final db = await initializeDB();
+    final List<Map<String, Object?>> queryResult = await db.query(
+      orderItemsTable,
+      where: 'orderId = ?',
+      whereArgs: [orderId],
+    );
+    //TODO JOIN
+    return queryResult.map((e) => OrderItemModel.fromMap(e)).toList();
+  }
+
+  Future<int> createOrderItem(OrderItemModel item) async {
+    final db = await initializeDB();
+    final id = await db.insert(
+      orderItemsTable,
+      item.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    return Future.value(id);
+  }
+
+  Future<int> updateOrderItem(OrderItemModel item) async {
+    final db = await initializeDB();
+    final id = await db.update(
+      orderItemsTable,
+      item.toMap(),
+      where: 'id = ?',
+      whereArgs: [item.id],
+    );
+    return Future.value(id);
+  }
+
+  Future<int> deleteOrderItem(OrderItemModel item) async {
+    final db = await initializeDB();
+    final count = await db.delete(
+      orderItemsTable,
+      where: 'id = ?',
+      whereArgs: [item.id],
+    );
+    return Future.value(count);
   }
 }

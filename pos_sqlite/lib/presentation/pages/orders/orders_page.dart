@@ -1,50 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pos_sqlite/business/entities/order_entity.dart';
 import 'package:pos_sqlite/business/entities/table_entity.dart';
-import 'package:pos_sqlite/presentation/blocs/tables/tables_bloc.dart';
+import 'package:pos_sqlite/presentation/blocs/orders/orders_bloc.dart';
 
-class TablesPage extends StatefulWidget {
-  const TablesPage({super.key});
+class OrdersPage extends StatefulWidget {
+  final TableEntity? table;
+  const OrdersPage({
+    this.table,
+    super.key,
+  });
 
   @override
-  State<TablesPage> createState() => _TablesPageState();
+  State<OrdersPage> createState() => _OrdersPageState();
 }
 
-class _TablesPageState extends State<TablesPage> {
+class _OrdersPageState extends State<OrdersPage> {
   @override
   Widget build(BuildContext context) {
-    context.read<TablesBloc>().add(const LoadTablesEvent());
+    context.read<OrdersBloc>().add(widget.table != null
+        ? LoadTableOrdersEvent(tableId: widget.table!.id)
+        : const LoadAllOrdersEvent());
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Столы'),
+        title: Text(widget.table != null ? widget.table!.title : 'Все заказы'),
       ),
-      body: BlocBuilder<TablesBloc, TablesState>(
+      body: BlocBuilder<OrdersBloc, OrdersState>(
         builder: (contex, state) {
-          if (state is TablesLoaded) {
-            final tables = state.tables;
-
-            if (tables.isEmpty) {
+          if (state is OrdersLoaded) {
+            final items = state.orders;
+            if (items.isEmpty) {
               return const Center(
-                child: Text('Добавьте стол'),
+                child: Text('Добавьте заказ'),
               );
             } else {
               return ListView.builder(
-                itemCount: tables.length,
+                itemCount: items.length,
                 itemBuilder: (context, index) {
-                  final table = tables[index];
+                  final item = items[index];
 
                   return Card(
                     child: ListTile(
                       onTap: () {
-                        context.go(
-                          '/orders/table_orders',
-                          extra: table,
+                        contex.go(
+                          '/orders/order',
+                          extra: item,
                         );
                       },
-                      title: Text(table.title),
-                      subtitle: Text('${table.id}'),
+                      title: Text(item.client),
+                      subtitle: Text('${item.id}'),
                     ),
                   );
                 },
@@ -73,7 +79,7 @@ class _TablesPageState extends State<TablesPage> {
       builder: (BuildContext context) => AlertDialog(
         contentPadding: const EdgeInsets.only(left: 30, right: 30),
         title: const Text(
-          'Добавить стол',
+          'Добавить заказ',
           textAlign: TextAlign.center,
         ),
         actions: [
@@ -81,11 +87,12 @@ class _TablesPageState extends State<TablesPage> {
               onPressed: () {
                 final formValidator = categoryFormKey.currentState!.validate();
                 if (formValidator) {
-                  final table = TableEntity(
+                  final item = OrderEntity(
                     id: 0,
-                    title: titleTextController.text,
+                    tableId: widget.table != null ? widget.table!.id : 0,
+                    client: titleTextController.text,
                   );
-                  context.read<TablesBloc>().add(AddTablesEvent(table: table));
+                  context.read<OrdersBloc>().add(AddOrderEvent(order: item));
                   Navigator.pop(context);
                 }
               },
@@ -105,7 +112,7 @@ class _TablesPageState extends State<TablesPage> {
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       errorText: null,
-                      labelText: 'Название',
+                      labelText: 'Клиент',
                     ),
                   ),
                 ],

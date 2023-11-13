@@ -18,7 +18,7 @@ class TablesLoading extends TablesState {
 }
 
 class TablesLoaded extends TablesState {
-  final List<CategoryEntity> tables;
+  final List<TableEntity> tables;
 
   const TablesLoaded({
     required this.tables,
@@ -28,10 +28,10 @@ class TablesLoaded extends TablesState {
   List<Object?> get props => [tables];
 }
 
-class CategoriesError extends TablesState {
+class TablesError extends TablesState {
   final String message;
 
-  const CategoriesError({
+  const TablesError({
     required this.message,
   });
 

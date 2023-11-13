@@ -5,8 +5,11 @@ import 'package:pos_sqlite/core/error/locator.dart';
 import 'package:pos_sqlite/presentation/blocs/app_bloc_observer.dart';
 import 'package:pos_sqlite/presentation/blocs/categories/categories_bloc.dart';
 import 'package:pos_sqlite/presentation/blocs/items/items_bloc.dart';
+import 'package:pos_sqlite/presentation/blocs/order_items/order_items_bloc.dart';
+import 'package:pos_sqlite/presentation/blocs/orders/orders_bloc.dart';
+import 'package:pos_sqlite/presentation/blocs/tables/tables_bloc.dart';
 
-const showDebug = false;
+const showDebug = true;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +26,15 @@ void main() {
         ),
         BlocProvider<ItemsBloc>(
           create: (context) => sl<ItemsBloc>(),
+        ),
+        BlocProvider<TablesBloc>(
+          create: (context) => sl<TablesBloc>(),
+        ),
+        BlocProvider<OrdersBloc>(
+          create: (context) => sl<OrdersBloc>(),
+        ),
+        BlocProvider<OrderItemsBloc>(
+          create: (context) => sl<OrderItemsBloc>(),
         ),
       ],
       child: const App(),

@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pos_sqlite/app/nav_tab.dart';
 import 'package:pos_sqlite/business/entities/category_entity.dart';
+import 'package:pos_sqlite/business/entities/order_entity.dart';
+import 'package:pos_sqlite/business/entities/table_entity.dart';
 import 'package:pos_sqlite/main.dart';
 import 'package:pos_sqlite/presentation/pages/goods/items_page.dart';
 import 'package:pos_sqlite/presentation/pages/goods/categories_page.dart';
+import 'package:pos_sqlite/presentation/pages/orders/client_page.dart';
+import 'package:pos_sqlite/presentation/pages/orders/orders_page.dart';
 import 'package:pos_sqlite/presentation/pages/orders/tables_page.dart';
 
 import '../presentation/scaffold_with_navigation/scaffold_with_nested_navigation.dart';
@@ -46,19 +50,20 @@ GoRouter goRouter() {
             navigatorKey: _shellNavigatorAKey,
             routes: [
               GoRoute(
-                  path: branches[0].path,
-                  pageBuilder: (context, state) => const NoTransitionPage(
-                        child: CategoriesPage(),
-                      ),
-                  routes: [
-                    GoRoute(
-                      path: 'category',
-                      builder: (context, state) {
-                        final category = state.extra as CategoryEntity;
-                        return ItemsPage(category: category);
-                      },
-                    ),
-                  ]),
+                path: branches[0].path,
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: CategoriesPage(),
+                ),
+                routes: [
+                  GoRoute(
+                    path: 'category',
+                    builder: (context, state) {
+                      final category = state.extra as CategoryEntity;
+                      return ItemsPage(category: category);
+                    },
+                  ),
+                ],
+              ),
             ],
           ),
           StatefulShellBranch(
@@ -69,6 +74,28 @@ GoRouter goRouter() {
                 pageBuilder: (context, state) => const NoTransitionPage(
                   child: TablesPage(),
                 ),
+                routes: [
+                  GoRoute(
+                    path: 'table_orders',
+                    builder: (context, state) {
+                      final table = state.extra as TableEntity;
+                      return OrdersPage(table: table);
+                    },
+                  ),
+                  GoRoute(
+                    path: 'all_orders',
+                    builder: (context, state) {
+                      return const OrdersPage();
+                    },
+                  ),
+                  GoRoute(
+                    path: 'order',
+                    builder: (context, state) {
+                      final order = state.extra as OrderEntity;
+                      return ClientPage(order: order);
+                    },
+                  ),
+                ],
               ),
             ],
           ),
